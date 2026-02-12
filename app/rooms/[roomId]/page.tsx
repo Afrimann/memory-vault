@@ -67,7 +67,7 @@ export default function RoomPage() {
 
             {/* Title */}
             <div className="absolute bottom-0 left-0 right-0 p-5 md:p-10 z-10 text-center space-y-2">
-                <h1 className="text-2xl md:text-5xl font-bold tracking-tight">
+                <h1 className="text-2xl md:text-5xl font-bold tracking-tight animate-in slide-in-from-bottom-2 fade-in duration-700">
                     {room.name}
                 </h1>
 
@@ -116,10 +116,11 @@ export default function RoomPage() {
 
                 <div className="max-w-4xl mx-auto pb-20">
                     <div className="flex flex-col gap-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6">
-                        {memories.map((memory: any) => (
+                        {memories.map((memory: any, index: number) => (
                             <div
                                 key={memory._id}
-                                className="bg-card border border-border/40 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col"
+                                className="bg-card border border-border/40 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-500 flex flex-col animate-in fade-in slide-in-from-bottom-4 fill-mode-both"
+                                style={{ animationDelay: `${index * 50}ms` }}
                             >
                                 {/* CARD HEADER */}
                                 <div className="flex items-center justify-between p-4 bg-background/50 backdrop-blur-sm">

@@ -15,7 +15,7 @@ interface RoomCardProps {
 
 export default function RoomCard({ room }: RoomCardProps) {
     return (
-        <Card className="group relative h-full overflow-hidden border-border/50 bg-card/40 backdrop-blur-sm transition-all duration-500 hover:scale-[1.02] hover:bg-card/60 hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/20">
+        <Card className="group relative h-full overflow-hidden border-border/50 bg-card/40 backdrop-blur-sm transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1 hover:bg-card/60 hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/50">
             <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-transparent to-accent/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
             <CardHeader className="relative space-y-1 pb-2">
