@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import { BackgroundPattern } from "@/components/ui/background-pattern";
 
 export default function InvitePage() {
     const params = useParams();
@@ -62,7 +63,8 @@ export default function InvitePage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-linear-to-br from-background via-muted/30 to-primary/5">
+        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+            <BackgroundPattern />
             <Card className="w-full max-w-md text-center shadow-xl border-border/50 animate-in fade-in zoom-in-95 duration-500">
                 <CardHeader>
                     <CardTitle>You've been invited!</CardTitle>

@@ -25,7 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Copy, Check, UserPlus, Loader2 } from "lucide-react";
 
-export function InviteMemberModal({ roomId }: { roomId: Id<"rooms"> }) {
+export function InviteMemberModal({ roomId, trigger }: { roomId: Id<"rooms">, trigger?: React.ReactNode }) {
     const createInvite = useMutation(api.invitations.create);
     const [open, setOpen] = useState(false);
     const [role, setRole] = useState<"member" | "viewer" | "admin">("member");
@@ -60,9 +60,11 @@ export function InviteMemberModal({ roomId }: { roomId: Id<"rooms"> }) {
     return (
         <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) reset(); }}>
             <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
-                    <UserPlus className="h-4 w-4" /> Invite
-                </Button>
+                {trigger || (
+                    <Button variant="outline" size="sm" className="gap-2">
+                        <UserPlus className="h-4 w-4" /> Invite
+                    </Button>
+                )}
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
