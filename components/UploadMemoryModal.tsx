@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Upload, Image as ImageIcon, Video } from "lucide-react";
 
-export function UploadMemoryModal({ roomId }: { roomId: Id<"rooms"> }) {
+export function UploadMemoryModal({ roomId, trigger }: { roomId: Id<"rooms">, trigger?: React.ReactNode }) {
     const generateUploadUrl = useMutation(api.memories.generateUploadUrl);
     const createMemory = useMutation(api.memories.create);
 
@@ -79,9 +79,11 @@ export function UploadMemoryModal({ roomId }: { roomId: Id<"rooms"> }) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>
-                    <Upload className="mr-2 h-4 w-4" /> Add Memory
-                </Button>
+                {trigger || (
+                    <Button>
+                        <Upload className="mr-2 h-4 w-4" /> Add Memory
+                    </Button>
+                )}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>

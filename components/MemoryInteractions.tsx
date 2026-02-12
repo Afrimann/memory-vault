@@ -54,18 +54,21 @@ export function MemoryInteractions({ memoryId }: { memoryId: Id<"memories"> }) {
                 <Button
                     variant="ghost"
                     size="sm"
-                    className={cn("gap-2 hover:text-red-500", hasLiked && "text-red-500")}
+                    className={cn(
+                        "gap-2 rounded-full px-3 hover:bg-red-500/10 hover:text-red-500 transition-all duration-300 group/heart",
+                        hasLiked && "text-red-500 bg-red-500/10"
+                    )}
                     onClick={() => toggleReaction({ memoryId, type: "heart" })}
                 >
-                    <Heart className={cn("h-4 w-4", hasLiked && "fill-current")} />
-                    <span>{heartCount > 0 ? heartCount : ""}</span>
+                    <Heart className={cn("h-4 w-4 transition-transform duration-300 group-hover/heart:scale-125", hasLiked && "fill-current scale-110")} />
+                    <span className="font-medium">{heartCount > 0 ? heartCount : ""}</span>
                 </Button>
 
                 <Popover open={isCommentsOpen} onOpenChange={setIsCommentsOpen}>
                     <PopoverTrigger asChild>
-                        <Button variant="ghost" size="sm" className="gap-2">
+                        <Button variant="ghost" size="sm" className="gap-2 rounded-full px-3 hover:bg-primary/10 hover:text-primary transition-all duration-300">
                             <MessageCircle className="h-4 w-4" />
-                            <span>{comments?.length || 0}</span>
+                            <span className="font-medium">{comments?.length || 0}</span>
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-80 p-0" align="start">
