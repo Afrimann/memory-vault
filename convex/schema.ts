@@ -17,6 +17,8 @@ export default defineSchema({
     description: v.optional(v.string()),
     coverImage: v.optional(v.string()), // Storage ID or URL
     ownerId: v.id("users"),
+    accessCodeHash: v.optional(v.string()),
+    hasInviteCode: v.optional(v.boolean()),
   })
   .index("by_owner", ["ownerId"]),
 

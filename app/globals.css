@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "tailwindcss-animate";
 
 @theme {
   --font-sans: var(--font-geist-sans);
@@ -97,6 +98,7 @@ body::before {
   pointer-events: none;
   z-index: -1;
 }
+
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;

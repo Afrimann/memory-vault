@@ -13,6 +13,7 @@ import type * as invitations from "../invitations.js";
 import type * as memories from "../memories.js";
 import type * as reactions from "../reactions.js";
 import type * as rooms from "../rooms.js";
+import type * as security from "../security.js";
 import type * as users from "../users.js";
 import type * as utils from "../utils.js";
 
@@ -28,6 +29,7 @@ declare const fullApi: ApiFromModules<{
   memories: typeof memories;
   reactions: typeof reactions;
   rooms: typeof rooms;
+  security: typeof security;
   users: typeof users;
   utils: typeof utils;
 }>;

@@ -17,12 +17,12 @@ export default function DashboardPage() {
             <BackgroundPattern />
             <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 md:mb-12 relative z-10 w-full">
                 <div className="space-y-1">
-                    <h1 className="text-2xl md:text-4xl font-black tracking-tight text-foreground">Your Rooms</h1>
-                    <p className="text-muted-foreground text-sm md:text-base max-w-md">
+                    <h1 className="text-2xl md:text-4xl font-black tracking-tight text-foreground animate-in slide-in-from-left-8 fade-in duration-700">Your Rooms</h1>
+                    <p className="text-muted-foreground text-sm md:text-base max-w-md animate-in slide-in-from-left-8 fade-in duration-700 delay-100 fill-mode-both">
                         Private spaces for your shared memories.
                     </p>
                 </div>
-                <div className="flex items-center gap-3 w-full md:w-auto">
+                <div className="flex items-center gap-3 w-full md:w-auto animate-in slide-in-from-right-8 fade-in duration-700 delay-200 fill-mode-both">
                     <div className="flex-1 md:flex-none">
                         <CreateRoomModal />
                     </div>

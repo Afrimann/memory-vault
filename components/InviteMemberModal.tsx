@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
@@ -9,42 +9,41 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Copy, Check, UserPlus, Loader2 } from "lucide-react";
+import { Copy, Check, UserPlus, Loader2, Lock } from "lucide-react";
 
 export function InviteMemberModal({ roomId, trigger }: { roomId: Id<"rooms">, trigger?: React.ReactNode }) {
-    const createInvite = useMutation(api.invitations.create);
     const [open, setOpen] = useState(false);
-    const [role, setRole] = useState<"member" | "viewer" | "admin">("member");
-    const [inviteLink, setInviteLink] = useState("");
-    const [isCopied, setIsCopied] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    const setAccessCode = useMutation(api.rooms.setAccessCode);
+    const room = useQuery(api.rooms.get, { roomId });
 
-    const handleGenerate = async () => {
+    const [step, setStep] = useState<"loading" | "set-code" | "share">("loading");
+    const [code, setCode] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [isCopied, setIsCopied] = useState(false);
+
+    // Determine initial step based on room state
+    // We can't do this easily in useEffect because `room` loads async.
+    // Instead render conditional content.
+
+    const handleSetCode = async () => {
         setIsLoading(true);
         try {
-            const token = await createInvite({ roomId, role });
-            const link = `${window.location.origin}/invite/${token}`;
-            setInviteLink(link);
+            await setAccessCode({ roomId, code });
+            // Move to share state
         } catch (error) {
-            console.error("Failed to create invite:", error);
+            console.error("Failed to set code:", error);
         } finally {
             setIsLoading(false);
         }
     };
+
+    const inviteLink = typeof window !== "undefined" ? `${window.location.origin}/join/${roomId}` : "";
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(inviteLink);
@@ -52,13 +51,10 @@ export function InviteMemberModal({ roomId, trigger }: { roomId: Id<"rooms">, tr
         setTimeout(() => setIsCopied(false), 2000);
     };
 
-    const reset = () => {
-        setInviteLink("");
-        setIsCopied(false);
-    }
+    const hasCode = room?.hasInviteCode;
 
     return (
-        <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) reset(); }}>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 {trigger || (
                     <Button variant="outline" size="sm" className="gap-2">
@@ -70,53 +66,63 @@ export function InviteMemberModal({ roomId, trigger }: { roomId: Id<"rooms">, tr
                 <DialogHeader>
                     <DialogTitle>Invite to Room</DialogTitle>
                     <DialogDescription>
-                        Generate a unique link to share with someone.
+                        {hasCode
+                            ? "Share the link and access code with your friends."
+                            : "Set a secure access code to invite members."}
                     </DialogDescription>
                 </DialogHeader>
 
-                {!inviteLink ? (
+                {room === undefined ? (
+                    <div className="flex justify-center p-8">
+                        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                    </div>
+                ) : !hasCode ? (
                     <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="role" className="text-right">
-                                Role
-                            </Label>
-                            <Select value={role} onValueChange={(v: any) => setRole(v)}>
-                                <SelectTrigger className="col-span-3">
-                                    <SelectValue placeholder="Select a role" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="viewer">Viewer (Read Only)</SelectItem>
-                                    <SelectItem value="member">Member (Can Upload)</SelectItem>
-                                    <SelectItem value="admin">Admin (Full Control)</SelectItem>
-                                </SelectContent>
-                            </Select>
+                        <div className="space-y-2">
+                            <Label htmlFor="code">Create Room Access Code</Label>
+                            <Input
+                                id="code"
+                                type="text"
+                                placeholder="ex. secret123"
+                                value={code}
+                                onChange={(e) => setCode(e.target.value)}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                This code will be required for anyone to join. It cannot be recovered if forgotten, only reset.
+                            </p>
                         </div>
-                        <Button onClick={handleGenerate} disabled={isLoading}>
+                        <Button onClick={handleSetCode} disabled={isLoading || code.length < 3}>
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            Generate Link
+                            Set Code & Get Link
                         </Button>
                     </div>
                 ) : (
-                    <div className="flex flex-col gap-4 py-4">
-                        <div className="flex items-center space-x-2">
-                            <div className="grid flex-1 gap-2">
-                                <Label htmlFor="link" className="sr-only">
-                                    Link
-                                </Label>
+                    <div className="flex flex-col gap-6 py-4">
+                        <div className="space-y-2">
+                            <Label>Invite Link</Label>
+                            <div className="flex items-center space-x-2">
                                 <Input
-                                    id="link"
-                                    defaultValue={inviteLink}
+                                    value={inviteLink}
                                     readOnly
+                                    className="bg-muted/50"
                                 />
+                                <Button type="button" size="icon" variant="outline" onClick={copyToClipboard}>
+                                    {isCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                                </Button>
                             </div>
-                            <Button type="submit" size="sm" className="px-3" onClick={copyToClipboard}>
-                                {isCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                                <span className="sr-only">Copy</span>
-                            </Button>
                         </div>
-                        <p className="text-sm text-muted-foreground text-center">
-                            This link expires in 7 days and can only be used once.
-                        </p>
+
+                        <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-4">
+                            <div className="flex items-start gap-3">
+                                <Lock className="h-5 w-5 text-yellow-600 mt-0.5" />
+                                <div className="space-y-1">
+                                    <p className="text-sm font-medium text-yellow-600">Don't forget the code!</p>
+                                    <p className="text-xs text-yellow-600/90 leading-relaxed">
+                                        You must share the <strong>Access Code</strong> manually with your friends. For security, we don't display it here.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 )}
             </DialogContent>
